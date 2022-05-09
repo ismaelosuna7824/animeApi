@@ -9,7 +9,7 @@ const app = express();
 app.use(cors())
 app.use(express.json());
 
-let animeDelDia = "";
+let animeDelDia = "s";
 let responseDia = {};
 let animePosibles:any = [];
 
