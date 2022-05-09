@@ -25,7 +25,7 @@ app.get('/manual', (req, res)=>{
         variables: {
             "seasonYear": randomAnimeYear[rnd]
         }
-    }).then(animeResponse=>{
+    }).then((animeResponse:any)=>{
        
         const rnds = Math.floor(Math.random() * animeResponse.data.data.Page.media.length)
         
@@ -82,7 +82,7 @@ io.on('connection', (socket) => {
         variables: {
             "seasonYear": randomAnimeYear[rnd]
         }
-    }).then(animeResponse=>{
+    }).then((animeResponse:any)=>{
        
         const rnds = Math.floor(Math.random() * animeResponse.data.data.Page.media.length)
         
