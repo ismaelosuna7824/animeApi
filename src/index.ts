@@ -77,7 +77,7 @@ io.on('connection', (socket) => {
 
 
   
-  var job = new CronJob('0 9 * * *', async function() {
+  var job = new CronJob('10 0 * * *', async function() {
     const rnd = Math.floor(Math.random() * randomAnimeYear.length)
    
     axios.post("https://graphql.anilist.co", {
