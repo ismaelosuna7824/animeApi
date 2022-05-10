@@ -15,6 +15,9 @@ let animePosibles:any = [];
 
 const randomAnimeYear = ["2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2022", "2021", "2022"]
 
+app.get('/', (req, res)=>{
+    res.json("api");
+})
 app.get('/manual', (req, res)=>{
    
     //console.log(response.data.anime)
