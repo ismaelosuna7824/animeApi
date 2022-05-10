@@ -3,13 +3,14 @@ import socketio from 'socket.io';
 
 import axios from 'axios';
 import cors from "cors";
+import * as crypto from 'crypto-js';
 var CronJob = require('cron').CronJob;
 
 const app = express();
 app.use(cors())
 app.use(express.json());
 
-let animeDelDia = "s";
+let animeDelDia = "";
 let responseDia = {};
 let animePosibles:any = [];
 
@@ -35,10 +36,13 @@ app.get('/manual', (req, res)=>{
         for (const key in animeResponse.data.data.Page.media) {
                 animePosibles.push(animeResponse.data.data.Page.media[key].title.romaji);
         }
+
+        animeDelDia = animeResponse.data.data.Page.media[rnds].title.romaji;
         responseDia = {
             animePosible: animePosibles,
             name: animeResponse.data.data.Page.media[rnds].title.romaji,
-            anime: animeResponse.data.data.Page.media[rnds].coverImage.extraLarge
+            anime: animeResponse.data.data.Page.media[rnds].coverImage.extraLarge,
+            status: false,
         }; 
         res.json(responseDia);
     })
@@ -68,16 +72,34 @@ const query = `
 
 
 io.on('connection', (socket) => { 
-    socket.emit('announcements', responseDia)
-    // socket.on("recivedata", (args)=>{
-    //     socket.emit('announcements', responseDia)
-    // })
+    //console.log(animeDelDia);
+    const dts = {status: false}
+    const rs = {...responseDia, ...dts}
+    socket.emit('announcements', rs)
+    socket.on("recivedata", (args)=>{
+        var bytes  = crypto.AES.decrypt(args, 'nanoAnime32');
+        var originalText = bytes.toString(crypto.enc.Utf8);
+        //console.log(originalText);
+        if(animeDelDia == args){
+            const dts = {status: false}
+            const rs = {...responseDia, ...dts}
+            //console.log(rs);
+            socket.emit('announcements', rs)
+        }else{
+            const dts = {status: true}
+            const rs = {...responseDia, ...dts}
+            //console.log(responseDia);
+            socket.emit('announcements', rs)
+        }
+       
+    })
     
   });
 
 
-  
+  //'10 0 * * *'
   var job = new CronJob('10 0 * * *', async function() {
+    //console.log('cron')
     const rnd = Math.floor(Math.random() * randomAnimeYear.length)
    
     axios.post("https://graphql.anilist.co", {
@@ -92,6 +114,7 @@ io.on('connection', (socket) => {
         for (const key in animeResponse.data.data.Page.media) {
                 animePosibles.push(animeResponse.data.data.Page.media[key].title.romaji);
         }
+        animeDelDia = animeResponse.data.data.Page.media[rnds].title.romaji;
         responseDia = {
             animePosible: animePosibles,
             name: animeResponse.data.data.Page.media[rnds].title.romaji,
