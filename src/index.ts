@@ -80,7 +80,7 @@ io.on('connection', (socket) => {
         var bytes  = crypto.AES.decrypt(args, 'nanoAnime32');
         var originalText = bytes.toString(crypto.enc.Utf8);
         //console.log(originalText);
-        if(animeDelDia == args){
+        if(animeDelDia == originalText){
             const dts = {status: false}
             const rs = {...responseDia, ...dts}
             //console.log(rs);
