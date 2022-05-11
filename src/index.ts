@@ -1,9 +1,9 @@
 import express from "express";
 import socketio from 'socket.io';
+import bcryptjs from 'bcryptjs';
 
 import axios from 'axios';
 import cors from "cors";
-import * as crypto from 'crypto-js';
 import e from "express";
 var CronJob = require('cron').CronJob;
 
@@ -59,17 +59,9 @@ app.get('/animes', (req, res)=>{
         res.json(rs);
     }else{
                 try {
-                    var bytes  = crypto.AES.decrypt(req.query.anime.toString(), 'nanoAnime32');
-                    var originalText = bytes.toString(crypto.enc.Utf8);
-                    if(originalText == ""){
-                        const dts = {status: false}
-                        const rs = {...responseDia, ...dts}
-                        //console.log(rs);
-                        res.json(rs);
-                    }
-                    else{
-                        console.log(originalText)
-                        if(animeDelDia == originalText){
+                
+                        
+                        if( bcryptjs.compareSync(animeDelDia, req.query.anime.toString())){
                             const dts = {status: false}
                             const rs = {...responseDia, ...dts}
                             //console.log(rs);
@@ -80,7 +72,7 @@ app.get('/animes', (req, res)=>{
                             //console.log(responseDia);
                             res.json(rs);
                         } 
-                    }
+                    
                 } catch (error) {
                     const dts = {status: false}
                     const rs = {...responseDia, ...dts}
