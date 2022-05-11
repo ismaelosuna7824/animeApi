@@ -4,6 +4,7 @@ import socketio from 'socket.io';
 import axios from 'axios';
 import cors from "cors";
 import * as crypto from 'crypto-js';
+import e from "express";
 var CronJob = require('cron').CronJob;
 
 const app = express();
@@ -46,13 +47,57 @@ app.get('/manual', (req, res)=>{
         }; 
         res.json(responseDia);
     })
-})
-const server = app.listen(5000, function() {
+});
+
+
+app.get('/animes', (req, res)=>{
+
+    // console.log(req.query.anime);
+    if(req.query.anime == "null" || req.query.anime == null){
+        const dts = {status: false}
+        const rs = {...responseDia, ...dts}
+        res.json(rs);
+    }else{
+                try {
+                    var bytes  = crypto.AES.decrypt(req.query.anime.toString(), 'nanoAnime32');
+                    var originalText = bytes.toString(crypto.enc.Utf8);
+                    if(originalText == ""){
+                        const dts = {status: false}
+                        const rs = {...responseDia, ...dts}
+                        //console.log(rs);
+                        res.json(rs);
+                    }
+                    else{
+                        console.log(originalText)
+                        if(animeDelDia == originalText){
+                            const dts = {status: false}
+                            const rs = {...responseDia, ...dts}
+                            //console.log(rs);
+                            res.json(rs);
+                        }else{
+                            const dts = {status: true}
+                            const rs = {...responseDia, ...dts}
+                            //console.log(responseDia);
+                            res.json(rs);
+                        } 
+                    }
+                } catch (error) {
+                    const dts = {status: false}
+                    const rs = {...responseDia, ...dts}
+                    //console.log(rs);
+                    res.json(rs);
+                }
+    }
+    
+
+});
+
+app.listen(5000, function() {
     console.log("listening on *:5000");
   });
-const io = new socketio.Server(server, {cors: {
-    origin: '*'
-}});
+// const io = new socketio.Server(server, {cors: {
+//     origin: '*'
+// }});
 
 
 const query = `
@@ -71,44 +116,45 @@ const query = `
 `;
 
 
-io.on('connection', (socket) => { 
-    //console.log(socket.handshake.query['hola']);
-    // console.log( Object.keys(responseDia).length);
-    // console.log(socket.handshake.query['hola'])
+
+// io.on('connection', (socket) => { 
+//     //console.log(socket.handshake.query['hola']);
+//     // console.log( Object.keys(responseDia).length);
+//     // console.log(socket.handshake.query['hola'])
     
-    if(socket.handshake.query['hola'] == "null"){
-        const dts = {status: false}
-        const rs = {...responseDia, ...dts}
-        socket.emit('announcements', rs)
-    }else{
-                 var bytes  = crypto.AES.decrypt(socket.handshake.query['hola']?.toString()!, 'nanoAnime32');
-                var originalText = bytes.toString(crypto.enc.Utf8);
-                //console.log(originalText);
-                if(animeDelDia == originalText){
-                    const dts = {status: false}
-                    const rs = {...responseDia, ...dts}
-                    //console.log(rs);
-                    socket.emit('announcements', rs)
-                }else{
-                    const dts = {status: true}
-                    const rs = {...responseDia, ...dts}
-                    //console.log(responseDia);
-                    socket.emit('announcements', rs)
-                }
-    }
+//     if(socket.handshake.query['hola'] == "null"){
+//         const dts = {status: false}
+//         const rs = {...responseDia, ...dts}
+//         socket.emit('announcements', rs)
+//     }else{
+//                  var bytes  = crypto.AES.decrypt(socket.handshake.query['hola']?.toString()!, 'nanoAnime32');
+//                 var originalText = bytes.toString(crypto.enc.Utf8);
+//                 //console.log(originalText);
+//                 if(animeDelDia == originalText){
+//                     const dts = {status: false}
+//                     const rs = {...responseDia, ...dts}
+//                     //console.log(rs);
+//                     socket.emit('announcements', rs)
+//                 }else{
+//                     const dts = {status: true}
+//                     const rs = {...responseDia, ...dts}
+//                     //console.log(responseDia);
+//                     socket.emit('announcements', rs)
+//                 }
+//     }
     
-    // socket.on("recivedata", (args)=>{
-    //     //console.log(args);
-    //     if(args == null){
-    //         //console.log("entra aqui");
+//     // socket.on("recivedata", (args)=>{
+//     //     //console.log(args);
+//     //     if(args == null){
+//     //         //console.log("entra aqui");
             
-    //     }else{
+//     //     }else{
 
    
-    //     }
-    // })
+//     //     }
+//     // })
     
-  });
+//   });
 
 
   //'10 0 * * *'
