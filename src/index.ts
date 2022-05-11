@@ -14,7 +14,7 @@ let animeDelDia = "";
 let responseDia = {};
 let animePosibles:any = [];
 
-const randomAnimeYear = ["2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2022", "2021", "2022"]
+const randomAnimeYear = ["2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022"]
 
 app.get('/', (req, res)=>{
     res.json("api");
@@ -72,27 +72,41 @@ const query = `
 
 
 io.on('connection', (socket) => { 
-    //console.log(animeDelDia);
-    const dts = {status: false}
-    const rs = {...responseDia, ...dts}
-    socket.emit('announcements', rs)
-    socket.on("recivedata", (args)=>{
-        var bytes  = crypto.AES.decrypt(args, 'nanoAnime32');
-        var originalText = bytes.toString(crypto.enc.Utf8);
-        //console.log(originalText);
-        if(animeDelDia == originalText){
-            const dts = {status: false}
-            const rs = {...responseDia, ...dts}
-            //console.log(rs);
-            socket.emit('announcements', rs)
-        }else{
-            const dts = {status: true}
-            const rs = {...responseDia, ...dts}
-            //console.log(responseDia);
-            socket.emit('announcements', rs)
-        }
-       
-    })
+    //console.log(socket.handshake.query['hola']);
+    // console.log( Object.keys(responseDia).length);
+    // console.log(socket.handshake.query['hola'])
+    
+    if(socket.handshake.query['hola'] == "null"){
+        const dts = {status: false}
+        const rs = {...responseDia, ...dts}
+        socket.emit('announcements', rs)
+    }else{
+                 var bytes  = crypto.AES.decrypt(socket.handshake.query['hola']?.toString()!, 'nanoAnime32');
+                var originalText = bytes.toString(crypto.enc.Utf8);
+                //console.log(originalText);
+                if(animeDelDia == originalText){
+                    const dts = {status: false}
+                    const rs = {...responseDia, ...dts}
+                    //console.log(rs);
+                    socket.emit('announcements', rs)
+                }else{
+                    const dts = {status: true}
+                    const rs = {...responseDia, ...dts}
+                    //console.log(responseDia);
+                    socket.emit('announcements', rs)
+                }
+    }
+    
+    // socket.on("recivedata", (args)=>{
+    //     //console.log(args);
+    //     if(args == null){
+    //         //console.log("entra aqui");
+            
+    //     }else{
+
+   
+    //     }
+    // })
     
   });
 
