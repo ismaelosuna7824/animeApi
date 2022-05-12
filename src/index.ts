@@ -17,10 +17,10 @@ let animePosibles:any = [];
 
 const randomAnimeYear = ["2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022"]
 
-app.get('/', (req, res)=>{
+app.get('/api/', (req, res)=>{
     res.json("api");
 })
-app.get('/manual', (req, res)=>{
+app.get('/api/manual', (req, res)=>{
    
     //console.log(response.data.anime)
     const rnd = Math.floor(Math.random() * randomAnimeYear.length)
@@ -50,14 +50,14 @@ app.get('/manual', (req, res)=>{
 });
 
 
-app.get('/animes', (req, res)=>{
+app.get('/api/animes', (req, res)=>{
 
     // console.log(req.query.anime);
-    if(req.query.anime == "null" || req.query.anime == null){
-        const dts = {status: false}
-        const rs = {...responseDia, ...dts}
-        res.json(rs);
-    }else{
+            if(req.query.anime == "null" || req.query.anime == null){
+                const dts = {status: false}
+                const rs = {...responseDia, ...dts}
+                res.json(rs);
+            }else{
                 try {
                 
                         
