@@ -4,7 +4,8 @@ import bcryptjs from 'bcryptjs';
 
 import axios from 'axios';
 import cors from "cors";
-import e from "express";
+import CryptoJS from 'crypto-js';
+
 var CronJob = require('cron').CronJob;
 
 const app = express();
@@ -41,7 +42,7 @@ app.get('/manual', (req, res)=>{
         animeDelDia = animeResponse.data.data.Page.media[rnds].title.romaji;
         responseDia = {
             animePosible: animePosibles,
-            name: animeResponse.data.data.Page.media[rnds].title.romaji,
+            name: CryptoJS.AES.encrypt(`${animeResponse.data.data.Page.media[rnds].title.romaji}`, 'api67GameAnime').toString(),
             anime: animeResponse.data.data.Page.media[rnds].coverImage.extraLarge,
             status: false,
         }; 
@@ -67,6 +68,7 @@ app.get('/animes', (req, res)=>{
                             //console.log(rs);
                             res.json(rs);
                         }else{
+                            //console.log("entra aqyu")
                             const dts = {status: true}
                             const rs = {...responseDia, ...dts}
                             //console.log(responseDia);
@@ -169,7 +171,7 @@ const query = `
         animeDelDia = animeResponse.data.data.Page.media[rnds].title.romaji;
         responseDia = {
             animePosible: animePosibles,
-            name: animeResponse.data.data.Page.media[rnds].title.romaji,
+            name: CryptoJS.AES.encrypt(`${animeResponse.data.data.Page.media[rnds].title.romaji}`, 'api67GameAnime').toString(),
             anime: animeResponse.data.data.Page.media[rnds].coverImage.extraLarge
         }; 
     })
