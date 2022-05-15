@@ -81,17 +81,17 @@ app.get('/animes', (req, res)=>{
                     //console.log(rs);
                     res.json(rs);
                 }
-    }
+            }
     
 
 });
 
-app.listen(5000, function() {
+const server = app.listen(5000, function() {
     console.log("listening on *:5000");
   });
-// const io = new socketio.Server(server, {cors: {
-//     origin: '*'
-// }});
+const io = new socketio.Server(server, {cors: {
+    origin: '*'
+}});
 
 
 const query = `
@@ -111,44 +111,41 @@ const query = `
 
 
 
-// io.on('connection', (socket) => { 
-//     //console.log(socket.handshake.query['hola']);
-//     // console.log( Object.keys(responseDia).length);
-//     // console.log(socket.handshake.query['hola'])
-    
-//     if(socket.handshake.query['hola'] == "null"){
-//         const dts = {status: false}
-//         const rs = {...responseDia, ...dts}
-//         socket.emit('announcements', rs)
-//     }else{
-//                  var bytes  = crypto.AES.decrypt(socket.handshake.query['hola']?.toString()!, 'nanoAnime32');
-//                 var originalText = bytes.toString(crypto.enc.Utf8);
-//                 //console.log(originalText);
-//                 if(animeDelDia == originalText){
-//                     const dts = {status: false}
-//                     const rs = {...responseDia, ...dts}
-//                     //console.log(rs);
-//                     socket.emit('announcements', rs)
-//                 }else{
-//                     const dts = {status: true}
-//                     const rs = {...responseDia, ...dts}
-//                     //console.log(responseDia);
-//                     socket.emit('announcements', rs)
-//                 }
-//     }
-    
-//     // socket.on("recivedata", (args)=>{
-//     //     //console.log(args);
-//     //     if(args == null){
-//     //         //console.log("entra aqui");
-            
-//     //     }else{
+io.on('connection', (socket) => { 
+    //console.log(socket.handshake.query['hola']);
+    // console.log( Object.keys(responseDia).length);
+    // console.log(socket.handshake.query['hola'])
 
-   
-//     //     }
-//     // })
-    
-//   });
+
+    if(socket.handshake.query['hola'] == "null" || socket.handshake.query['hola'] == null){
+        const dts = {status: false}
+        const rs = {...responseDia, ...dts}
+        socket.emit('announcements', rs)
+    }else{
+        try {
+        
+                
+            if( bcryptjs.compareSync(animeDelDia, socket.handshake.query['hola'].toString())){
+                const dts = {status: false}
+                const rs = {...responseDia, ...dts}
+                //console.log(rs);
+                socket.emit('announcements', rs)
+            }else{
+                //console.log("entra aqyu")
+                const dts = {status: true}
+                const rs = {...responseDia, ...dts}
+                //console.log(responseDia);
+                socket.emit('announcements', rs)
+            } 
+            
+        } catch (error) {
+            const dts = {status: false}
+            const rs = {...responseDia, ...dts}
+            //console.log(rs);
+            socket.emit('announcements', rs)
+        }
+    }
+});
 
 
   //'10 0 * * *'
